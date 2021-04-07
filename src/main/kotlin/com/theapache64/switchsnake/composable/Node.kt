@@ -1,9 +1,15 @@
 package com.theapache64.switchsnake.composable
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.theapache64.switchsnake.APPLE_COLOR
 import com.theapache64.switchsnake.CellType
+import com.theapache64.switchsnake.Grid
 import com.theapache64.switchsnake.SNAKE_COLOR
 import com.theapache64.switchsnake.model.Cell
 
@@ -14,6 +20,7 @@ fun Node(
     snakeCells: List<Cell>,
     cellType: CellType,
     appleCell: Cell,
+    gameModeData: GameModeData? = null
 ) {
     // Finding cell
     val snakeCell = snakeCells.find { it.x == x && it.y == y }
@@ -85,5 +92,20 @@ fun Node(
                 }
             )
         }
+        CellType.Game -> {
+            require(gameModeData != null)
+            Grid(
+                modifier = Modifier.border(1.dp, Color.White).padding(2.dp),
+                cellType = gameModeData.actualCellType,
+                snakeCells = gameModeData.snakeCells,
+                appleCell = gameModeData.appleCell
+            )
+        }
     }
 }
+
+data class GameModeData(
+    val actualCellType: CellType,
+    val snakeCells: List<Cell>,
+    val appleCell: Cell
+)

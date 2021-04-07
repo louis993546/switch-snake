@@ -47,5 +47,14 @@ fun BoxScope.CellTypeController(
             },
             text = "Radio"
         )
+
+        // Game
+        CustomRadioButton(
+            selected = cellType == CellType.Game,
+            onClick = {
+                onCellTypeChanged(CellType.Game)
+            },
+            text = "Game"
+        )
     }
 }

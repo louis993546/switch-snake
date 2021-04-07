@@ -15,14 +15,15 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.theapache64.switchsnake.composable.Alert
 import com.theapache64.switchsnake.composable.CellTypeController
+import com.theapache64.switchsnake.composable.GameModeData
 import com.theapache64.switchsnake.composable.Node
 import com.theapache64.switchsnake.model.Cell
 import com.theapache64.switchsnake.theme.SwitchSnakeTheme
 import kotlinx.coroutines.delay
 
 
-private const val COLUMNS = 30
-private const val ROWS = 15
+private const val COLUMNS = 8
+private const val ROWS = 8
 private const val SWITCH_WIDTH = 40
 private const val SWITCH_HEIGHT = 29
 private const val GAME_LOOP_DELAY = 120L
@@ -30,8 +31,8 @@ private const val GAME_LOOP_DELAY = 120L
 val APPLE_COLOR = Color(0xffff0800)
 val SNAKE_COLOR = Color(0xff53B32C)
 const val WINDOW_PADDING = 60
-const val WINDOW_WIDTH = (SWITCH_WIDTH * COLUMNS) + WINDOW_PADDING
-const val WINDOW_HEIGHT = (SWITCH_HEIGHT * ROWS) + WINDOW_PADDING
+const val WINDOW_WIDTH = (SWITCH_WIDTH * COLUMNS * COLUMNS) + WINDOW_PADDING
+const val WINDOW_HEIGHT = (SWITCH_HEIGHT * ROWS * ROWS) + WINDOW_PADDING
 
 val ORIGIN = arrayOf(
     Cell(2, 0),
@@ -44,7 +45,7 @@ enum class Direction {
 }
 
 enum class CellType {
-    Switch, CheckBox, Radio
+    Switch, CheckBox, Radio, Game
 }
 
 private val DEFAULT_DIRECTION = Direction.RIGHT
@@ -100,22 +101,11 @@ fun main() {
                         .padding(10.dp)
                 )
 
-
-                Row {
-                    repeat(COLUMNS) { x ->
-                        Column {
-                            repeat(ROWS) { y ->
-                                Node(
-                                    x = x,
-                                    y = y,
-                                    snakeCells = snakeCells,
-                                    cellType = cellType,
-                                    appleCell = appleCell
-                                )
-                            }
-                        }
-                    }
-                }
+                Grid(
+                    snakeCells = snakeCells,
+                    cellType = cellType,
+                    appleCell = appleCell
+                )
 
                 if (isGameOver) {
                     Alert(
@@ -216,6 +206,37 @@ fun main() {
             }
 
 
+        }
+    }
+}
+
+@Composable
+fun Grid(
+    modifier: Modifier = Modifier,
+    snakeCells: List<Cell>,
+    cellType: CellType,
+    appleCell: Cell
+) {
+    Row(modifier) {
+        repeat(COLUMNS) { x ->
+            Column {
+                repeat(ROWS) { y ->
+                    Node(
+                        x = x,
+                        y = y,
+                        snakeCells = snakeCells,
+                        cellType = cellType,
+                        appleCell = appleCell,
+                        gameModeData = if (cellType == CellType.Game) {
+                            GameModeData(
+                                actualCellType = CellType.Switch, // TODO add another checkbox to the controller
+                                snakeCells = snakeCells,
+                                appleCell = appleCell
+                            )
+                        } else null
+                    )
+                }
+            }
         }
     }
 }
